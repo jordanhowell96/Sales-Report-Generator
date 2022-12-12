@@ -6,7 +6,7 @@ from .config import DEFAULT_PROD_MASTER_FILE, DEFAULT_SALES_FILE, \
     DEFAULT_TEAM_MAP_FILE, SOURCE_FOLDER
 
 
-def read_infile(file_name: str) -> tuple:
+def read_infile(file_name: str) -> tuple[list[str]]:
     """
         Generic read function for an input file
 
@@ -23,7 +23,8 @@ def read_infile(file_name: str) -> tuple:
 
     try:
         with open(file_path, 'r', encoding="utf-8") as infile:
-            csv_rows: tuple = tuple(csv.reader(infile))
+            csv_rows: tuple[list[str]] = tuple(csv.reader(infile))
+            print(csv_rows)
 
     except FileNotFoundError:
         print(f"Error: Input file not found at {file_path}\n")
@@ -92,7 +93,7 @@ def read_sales(file_name: str | None = None) -> tuple[Sale]:
         print(f"Sales file not specified. Default used: {file_name}")
         print("To change this, run again with --sales={name of file} or -s {name of file}\n")
 
-    csv_rows = read_infile(file_name)
+    csv_rows: tuple[list[str]] = read_infile(file_name)
 
     # Create sales data output tuple
     try:
@@ -136,7 +137,7 @@ def read_team_map(file_name: str | None = None) -> dict[int, str]:
         print(f"Team Map file not specified. Default used: {file_name}")
         print("To change this, run again with --team-map={name of file} or -t {name of file}\n")
 
-    csv_rows = read_infile(file_name)
+    csv_rows: tuple[list[str]] = read_infile(file_name)
 
     # Create team map output dict
     try:

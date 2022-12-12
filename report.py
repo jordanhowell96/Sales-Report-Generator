@@ -9,9 +9,6 @@ from utils.models import Product, ProductSaleData, Sale
 from argparse import Namespace
 
 
-# TODO: Write tests
-# TODO: Documentation (readme and cl hints)
-
 def main() -> None:
     """
         Main function for generating team and product reports
