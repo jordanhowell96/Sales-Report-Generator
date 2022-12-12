@@ -5,30 +5,40 @@ from .config import DEFAULT_TEAM_RPT_FILE, DEFAULT_PROD_RPT_FILE, DESTINATION_FO
 from ..models import ProductSaleData
 
 
-def write_outfile(input_path: str, file_rows: list) -> str:
+def write_outfile(file_name: str, file_rows: list) -> bool:
+    """
+        Generic function to write an output file
 
-    file_path = input_path
-    success: bool = False
-    tries = 0
-    while success is False:
-        try:
-            with open(file_path, 'w', newline='') as outfile:
-                file_writer = csv.writer(outfile)
+        :param file_name: name of the file to write (str)
+        :param file_rows: tuple of rows to write to the file
 
-                for row in file_rows:
-                    file_writer.writerow(row)
+        :return: bool indicating if file was successfully written
+    """
 
-            success = True
+    if file_name[-4:] != ".csv":
+        print("Error: Output files must be specified as .csv files\n")
+        return False
 
-        except PermissionError:
-            tries += 1
-            if tries == 1:
-                file_path += "(1)"
-            else:
-                file_path = file_path[:-2] + str(tries) + ")"
-    if file_path != input_path:
-        print("Warning: File")
-    return file_path
+    success = False
+    file_path = f"{DESTINATION_FOLDER}\\{file_name}"
+
+    try:
+        with open(file_path, 'w', newline='') as outfile:
+            file_writer = csv.writer(outfile)
+
+            # Write rows
+            for row in file_rows:
+                file_writer.writerow(row)
+
+        success = True
+
+    except PermissionError:
+        print(f"Error: Cannot write file at {file_path}. Ensure the file is closed.")
+
+    except FileNotFoundError:
+        print(f"Error: Output folder ({DESTINATION_FOLDER}) not found.\n")
+
+    return success
 
 
 def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
@@ -39,8 +49,6 @@ def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
         :param team_rpt: team report dict with key = team name (str), value = revenue (float)
 
         :return: None
-
-        :raises FileNotFoundError if DESTINATION_FOLDER cannot be found
     """
 
     if file_name is None:
@@ -59,10 +67,10 @@ def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
     file_rows.insert(0, ("Team", "GrossRevenue"))
 
     # Write file
-    file_path = f"{DESTINATION_FOLDER}\\{file_name}"
-    write_outfile(file_path, file_rows)
+    success = write_outfile(file_name, file_rows)
 
-    print(f"Team report file written at {file_path}\n")
+    if success:
+        print(f"Team report file written at {DESTINATION_FOLDER}\\{file_name}\n")
 
 
 def write_prod_rpt(file_name: str | None,
@@ -77,8 +85,6 @@ def write_prod_rpt(file_name: str | None,
             value = ProductSaleData
 
         :return: None
-
-        :raises FileNotFoundError if DESTINATION_FOLDER cannot be found
     """
 
     if file_name is None:
@@ -101,7 +107,7 @@ def write_prod_rpt(file_name: str | None,
     file_rows.insert(0, ("Name", "GrossRevenue", "TotalUnits", "DiscountCost"))
 
     # Write file
-    file_path = f"{DESTINATION_FOLDER}\\{file_name}"
-    file_path = write_outfile(file_path, file_rows)
+    success = write_outfile(file_name, file_rows)
 
-    print(f"Product report file written at {file_path}\n")
+    if success:
+        print(f"Product report file written at {DESTINATION_FOLDER}\\{file_name}\n")

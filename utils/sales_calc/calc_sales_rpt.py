@@ -7,14 +7,17 @@ from ..models import Product, ProductSaleData, Sale
 def calc_sales_rpt(*,
                    team_map: dict[int, str],
                    prod_master: dict[int, Product],
-                   sales_data: tuple[Sale]
-                   ) -> tuple[dict[str, float], dict[str, ProductSaleData]]:
+                   sales_data: tuple[Sale],
+                   hide_exc=False
+                   ) -> tuple[dict[str, float],
+                              dict[str, ProductSaleData]]:
     """
         Calculates the team report and product report from the team map, product master, and sales data
 
         :param team_map: dict with key = team id (int), value = team name (str)
         :param prod_master: dict with key = product id (int), value = Product
         :param sales_data: tuple of sales (Sale)
+        :param hide_exc: bool to specify if exceptions should be hidden from console
 
         :returns: tuple of two dicts where the first dict contains team report information with
 
@@ -41,11 +44,17 @@ def calc_sales_rpt(*,
         # Get product info
         product: Product = prod_master.get(sale.prod_id)
         if not product:
+            if hide_exc:
+                print(f"Error: Product ID {sale.prod_id} not found in team map.")
+                exit()
             raise ProductNotFoundError(sale.prod_id)
 
         # Get team name
         team_name: str = team_map.get(sale.team_id)
         if not team_name:
+            if hide_exc:
+                print(f"Error: Team ID {sale.team_id} not found in product master.")
+                exit()
             raise TeamNotFoundError(sale.team_id)
 
         units_sold: int = sale.lots_sold * product.lot_size

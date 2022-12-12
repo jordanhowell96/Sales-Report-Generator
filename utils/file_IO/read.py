@@ -6,20 +6,27 @@ from .config import DEFAULT_PROD_MASTER_FILE, DEFAULT_SALES_FILE, \
     DEFAULT_TEAM_MAP_FILE, SOURCE_FOLDER
 
 
-def read_infile(file_path: str) -> tuple:
+def read_infile(file_name: str) -> tuple:
     """
         Generic read function for an input file
 
-        :param file_path: path of source file (str)
+        :param file_name: name of source file (str)
 
         :returns: tuple of file contents
     """
+
+    if file_name[-4:] != ".csv":
+        print("Error: Input files must be specified as .csv files")
+        exit()
+
+    file_path = f"{SOURCE_FOLDER}\\{file_name}"
+
     try:
         with open(file_path, 'r', encoding="utf-8") as infile:
             csv_rows: tuple = tuple(csv.reader(infile))
 
     except FileNotFoundError:
-        print(f"Input file not found at {file_path}")
+        print(f"Error: Input file not found at {file_path}\n")
         exit()
 
     return csv_rows
@@ -41,8 +48,7 @@ def read_prod_master(file_name: str | None = None) -> dict[int, Product]:
         print(f"Product Master file not specified. Default used: {file_name}")
         print("To change this, run again with --product-master={name of file} or -p {name of file}\n")
 
-    file_path = f"{SOURCE_FOLDER}\\{file_name}"
-    csv_rows = read_infile(file_path)
+    csv_rows = read_infile(file_name)
 
     # Create product master output dict
     prod_master: dict[int, Product] = {}
@@ -61,7 +67,7 @@ def read_prod_master(file_name: str | None = None) -> dict[int, Product]:
 
     except (ValueError, IndexError):
 
-        print(f"Error: Product Master input file ({file_path}) is invalid.")
+        print(f"Error: Product Master input file ({SOURCE_FOLDER}\\{file_name}) is invalid.")
         print("Ensure the the data in the file is as follows:")
         print("     Column 1: int (Product ID)")
         print("     Column 2: string (Name)")
@@ -86,8 +92,7 @@ def read_sales(file_name: str | None = None) -> tuple[Sale]:
         print(f"Sales file not specified. Default used: {file_name}")
         print("To change this, run again with --sales={name of file} or -s {name of file}\n")
 
-    file_path = f"{SOURCE_FOLDER}\\{file_name}"
-    csv_rows = read_infile(file_path)
+    csv_rows = read_infile(file_name)
 
     # Create sales data output tuple
     try:
@@ -105,7 +110,7 @@ def read_sales(file_name: str | None = None) -> tuple[Sale]:
 
     except (ValueError, IndexError):
 
-        print(f"Error: Sales Data input file ({file_path}) is invalid.")
+        print(f"Error: Sales Data input file ({SOURCE_FOLDER}\\{file_name}) is invalid.")
         print("Ensure the the data in the file is as follows:")
         print("     Column 1: int (Sale ID)")
         print("     Column 2: int (Product ID)")
@@ -126,26 +131,22 @@ def read_team_map(file_name: str | None = None) -> dict[int, str]:
 
     if file_name is None:
         # Use default file name from config.py
-        file_name = DEFAULT_TEAM_MAP_FILE
+        file_name: str = DEFAULT_TEAM_MAP_FILE
 
         print(f"Team Map file not specified. Default used: {file_name}")
         print("To change this, run again with --team-map={name of file} or -t {name of file}\n")
 
-    file_location: str = f"{SOURCE_FOLDER}\\{file_name}"
-
-    file_path = f"{SOURCE_FOLDER}\\{file_name}"
-    csv_rows = read_infile(file_path)
+    csv_rows = read_infile(file_name)
 
     # Create team map output dict
     try:
-
         team_map: dict[int, str] = {int(row[0]): row[1] for row in csv_rows[1:]}
 
         return team_map
 
     except (ValueError, IndexError):
 
-        print(f"Error: Team Map input file ({file_path}) is invalid.")
+        print(f"Error: Team Map input file ({SOURCE_FOLDER}\\{file_name}) is invalid.")
         print("Ensure the the data in the file is as follows:")
         print("     Column 1: int (Team ID)")
         print("     Column 2: string (Name)")

@@ -9,11 +9,8 @@ from utils.models import Product, ProductSaleData, Sale
 from argparse import Namespace
 
 
-# TODO: Handle Exceptions
-# TODO: Test cases (non-csv, empty files, etc)
 # TODO: Write tests
 # TODO: Documentation (readme and cl hints)
-# TODO: print statements
 
 def main() -> None:
     """
@@ -32,9 +29,11 @@ def main() -> None:
     # Calculate report data
     team_report: dict[str, float]
     prod_report: dict[str, ProductSaleData]
+
     team_report, prod_report = sales_calc.calc_sales_rpt(team_map=team_map,
                                                          sales_data=sales_data,
-                                                         prod_master=prod_master)
+                                                         prod_master=prod_master,
+                                                         hide_exc=True)
 
     # Write output files
     file_IO.write_team_rpt(cl_args.team_report_fn, team_report)
