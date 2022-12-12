@@ -2,6 +2,33 @@
 
 import csv
 from .config import DEFAULT_TEAM_RPT_FILE, DEFAULT_PROD_RPT_FILE, DESTINATION_FOLDER
+from ..models import ProductSaleData
+
+
+def write_outfile(input_path: str, file_rows: list) -> str:
+
+    file_path = input_path
+    success: bool = False
+    tries = 0
+    while success is False:
+        try:
+            with open(file_path, 'w', newline='') as outfile:
+                file_writer = csv.writer(outfile)
+
+                for row in file_rows:
+                    file_writer.writerow(row)
+
+            success = True
+
+        except PermissionError:
+            tries += 1
+            if tries == 1:
+                file_path += "(1)"
+            else:
+                file_path = file_path[:-2] + str(tries) + ")"
+    if file_path != input_path:
+        print("Warning: File")
+    return file_path
 
 
 def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
@@ -31,15 +58,15 @@ def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
     file_rows.sort(key=lambda r: float(r[1]), reverse=True)
     file_rows.insert(0, ("Team", "GrossRevenue"))
 
-    with open(f"{DESTINATION_FOLDER}\\{file_name}", 'w', newline='') as outfile:
-        file_writer = csv.writer(outfile)
+    # Write file
+    file_path = f"{DESTINATION_FOLDER}\\{file_name}"
+    write_outfile(file_path, file_rows)
 
-        for row in file_rows:
-            file_writer.writerow(row)
+    print(f"Team report file written at {file_path}\n")
 
 
 def write_prod_rpt(file_name: str | None,
-                   prod_rpt: dict[str, dict[str, float | int]]
+                   prod_rpt: dict[str, ProductSaleData]
                    ) -> None:
     """
         Writes a csv file from data in the team report dictionary
@@ -47,8 +74,7 @@ def write_prod_rpt(file_name: str | None,
         :param file_name: optional name of the file to write
         :param prod_rpt: product report dict with
             key = product name (str),
-            value = dictionary of product information
-                ("GrossRevenue": float, "TotalUnits": int, "DiscountCost": float)
+            value = ProductSaleData
 
         :return: None
 
@@ -63,19 +89,19 @@ def write_prod_rpt(file_name: str | None,
         print("To change this, run again with --product-report={name of file}\n")
 
     # Create list of rows to write to file from the product report
-    file_rows: list[tuple] = [(
+    file_rows: list[tuple[str, str, int | str, str]] = [(
         name,
-        f"{data['GrossRevenue']:.2f}",
-        data["TotalUnits"],
-        f"{data['DiscountCost']:.2f}")
+        f"{data.gross_rev:.2f}",
+        data.total_units,
+        f"{data.disc_cost:.2f}")
         for name, data in prod_rpt.items()]
 
     # Sort and add header
     file_rows.sort(key=lambda r: float(r[1]), reverse=True)
     file_rows.insert(0, ("Name", "GrossRevenue", "TotalUnits", "DiscountCost"))
 
-    with open(f"{DESTINATION_FOLDER}\\{file_name}", 'w', newline='') as outfile:
-        file_writer = csv.writer(outfile)
+    # Write file
+    file_path = f"{DESTINATION_FOLDER}\\{file_name}"
+    file_path = write_outfile(file_path, file_rows)
 
-        for row in file_rows:
-            file_writer.writerow(row)
+    print(f"Product report file written at {file_path}\n")

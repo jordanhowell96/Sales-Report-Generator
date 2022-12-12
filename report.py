@@ -1,31 +1,37 @@
 # This program reads data from a team map file, a product master file, and a sales file
 # then calculates team reports and product reports,
 # and finally writes these reports to output files.
-# The file names and locations have defaults set in file_IO/config.py, but may be overwritten by
+# The file names and locations have defaults set in utils/file_IO/config.py, but may be overwritten by
 # command line arguments. See README for more information.
 
-import parser
-import file_IO
-import sales_calc
+from utils import parser, sales_calc, file_IO
+from utils.models import Product, ProductSaleData, Sale
 from argparse import Namespace
 
 
+# TODO: Handle Exceptions
 # TODO: Test cases (non-csv, empty files, etc)
 # TODO: Write tests
 # TODO: Documentation (readme and cl hints)
+# TODO: print statements
 
 def main() -> None:
+    """
+        Main function for generating team and product reports
+        using files specified by command line arguments
+    """
+
     # Parse command line arguments
     cl_args: Namespace = parser.parse_input()
 
     # Read input files
     team_map: dict[int, str] = file_IO.read_team_map(cl_args.team_map_fn)
-    prod_master: dict[int, dict[str, str | float | int]] = file_IO.read_prod_master(cl_args.prod_master_fn)
-    sales_data: tuple[tuple[int, int, int, int, float]] = file_IO.read_sales(cl_args.sales_fn)
+    prod_master: dict[int, Product] = file_IO.read_prod_master(cl_args.prod_master_fn)
+    sales_data: tuple[Sale] = file_IO.read_sales(cl_args.sales_fn)
 
     # Calculate report data
     team_report: dict[str, float]
-    prod_report: dict[str, dict[str, float | int]]
+    prod_report: dict[str, ProductSaleData]
     team_report, prod_report = sales_calc.calc_sales_rpt(team_map=team_map,
                                                          sales_data=sales_data,
                                                          prod_master=prod_master)
