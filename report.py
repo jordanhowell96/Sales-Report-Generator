@@ -4,6 +4,7 @@
 # The file names and locations have defaults set in utils/file_IO/config.py, but may be overwritten by
 # command line arguments. See README for more information.
 
+from decimal import Decimal  # Decimal is used to avoid rounding errors
 from utils import parser, sales_calc, file_IO
 from utils.models import Product, ProductSaleData, Sale
 from argparse import Namespace
@@ -24,7 +25,7 @@ def main() -> None:
     sales_data: tuple[Sale] = file_IO.read_sales(cl_args.sales_fn)
 
     # Calculate report data
-    team_report: dict[str, float]
+    team_report: dict[str, Decimal]
     prod_report: dict[str, ProductSaleData]
 
     team_report, prod_report = sales_calc.calc_sales_rpt(team_map=team_map,

@@ -1,6 +1,7 @@
 # Defines functions for reading the team map, product master, and sales csv files.
 
 import csv
+from decimal import Decimal
 from ..models import Product, Sale
 from .config import DEFAULT_PROD_MASTER_FILE, DEFAULT_SALES_FILE, \
     DEFAULT_TEAM_MAP_FILE, SOURCE_FOLDER
@@ -24,7 +25,6 @@ def read_infile(file_name: str) -> tuple[list[str]]:
     try:
         with open(file_path, 'r', encoding="utf-8") as infile:
             csv_rows: tuple[list[str]] = tuple(csv.reader(infile))
-            print(csv_rows)
 
     except FileNotFoundError:
         print(f"Error: Input file not found at {file_path}\n")
@@ -57,10 +57,11 @@ def read_prod_master(file_name: str | None = None) -> dict[int, Product]:
     try:
 
         for row in csv_rows:
+
             prod_master.update({
                 int(row[0]):
                     Product(name=row[1],
-                            unit_price=float(row[2]),
+                            unit_price=Decimal(row[2]),
                             lot_size=int(row[3]))
             })
 
@@ -103,7 +104,7 @@ def read_sales(file_name: str | None = None) -> tuple[Sale]:
                 prod_id=int(sale[1]),
                 team_id=int(sale[2]),
                 lots_sold=int(sale[3]),
-                discount=float(sale[4])
+                discount=Decimal(sale[4])
             )
             for sale in csv_rows)
 

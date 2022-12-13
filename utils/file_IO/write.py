@@ -1,6 +1,7 @@
 # Defines functions for writing the team report, and product report csv files.
 
 import csv
+from decimal import Decimal
 from .config import DEFAULT_TEAM_RPT_FILE, DEFAULT_PROD_RPT_FILE, DESTINATION_FOLDER
 from ..models import ProductSaleData
 
@@ -9,7 +10,7 @@ def write_outfile(file_name: str, file_rows: list) -> bool:
     """
         Generic function to write an output file
 
-        :param file_name: name of the file to write (str)
+        :param file_name: name of the file to write (str or None)
         :param file_rows: tuple of rows to write to the file
 
         :return: bool indicating if file was successfully written
@@ -41,12 +42,14 @@ def write_outfile(file_name: str, file_rows: list) -> bool:
     return success
 
 
-def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
+def write_team_rpt(file_name: str | None, team_rpt: dict[str, Decimal]) -> None:
     """
         Writes a csv file from data in the team report dictionary
 
-        :param file_name: optional name of the file to write
-        :param team_rpt: team report dict with key = team name (str), value = revenue (float)
+        :param file_name: optional name of the file to write (str or None)
+        :param team_rpt: team report dict with
+            key = team name (str),
+            value = revenue (Decimal)
 
         :return: None
     """
@@ -59,7 +62,7 @@ def write_team_rpt(file_name: str | None, team_rpt: dict[str, float]) -> None:
         print("To change this, run again with --team-report={name of file}\n")
 
     # Create list of rows to write to file from the team report
-    file_rows: list[tuple[str, str]] = [(team, f"{revenue:.2f}")
+    file_rows: list[tuple[str, str]] = [(team, f"{round(revenue, 2):.2f}")
                                         for team, revenue in team_rpt.items()]
 
     # Sort and add header
@@ -79,7 +82,7 @@ def write_prod_rpt(file_name: str | None,
     """
         Writes a csv file from data in the team report dictionary
 
-        :param file_name: optional name of the file to write
+        :param file_name: optional name of the file to write (str or None)
         :param prod_rpt: product report dict with
             key = product name (str),
             value = ProductSaleData
@@ -97,9 +100,9 @@ def write_prod_rpt(file_name: str | None,
     # Create list of rows to write to file from the product report
     file_rows: list[tuple[str, str, int | str, str]] = [(
         name,
-        f"{data.gross_rev:.2f}",
+        f"{round(data.gross_rev, 2):.2f}",
         data.total_units,
-        f"{data.disc_cost:.2f}")
+        f"{round(data.disc_cost), 2:.2f}")
         for name, data in prod_rpt.items()]
 
     # Sort and add header

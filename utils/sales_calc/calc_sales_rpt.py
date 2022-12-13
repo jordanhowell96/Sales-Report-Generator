@@ -1,5 +1,9 @@
 # Defines function for calculating team and product reports from a team map, sales data, and product master.
+# Decimal is used instead of float to represent money in order to avoid
+# rounding errors that floats are prone to
 
+from decimal import Decimal
+from .update_rpts import update_prod_rpt, update_team_rpt
 from .exceptions import ProductNotFoundError, TeamNotFoundError
 from ..models import Product, ProductSaleData, Sale
 
@@ -9,7 +13,7 @@ def calc_sales_rpt(*,
                    prod_master: dict[int, Product],
                    sales_data: tuple[Sale],
                    hide_exc=False
-                   ) -> tuple[dict[str, float],
+                   ) -> tuple[dict[str, Decimal],
                               dict[str, ProductSaleData]]:
     """
         Calculates the team report and product report from the team map, product master, and sales data
@@ -22,7 +26,7 @@ def calc_sales_rpt(*,
         :returns: tuple of two dicts where the first dict contains team report information with
 
             key = team name (str),
-            value = revenue (float)
+            value = revenue (Decimal)
 
             and the second dict contains product report information with
 
@@ -34,7 +38,7 @@ def calc_sales_rpt(*,
     """
 
     # Initialize output dicts
-    team_rpt: dict[str, float] = {}
+    team_rpt: dict[str, Decimal] = {}
     prod_rpt: dict[str, ProductSaleData] = {}
 
     # Iterate through sales
@@ -58,31 +62,10 @@ def calc_sales_rpt(*,
             raise TeamNotFoundError(sale.team_id)
 
         units_sold: int = sale.lots_sold * product.lot_size
-        revenue: float = units_sold * product.unit_price
-        disc_cost: float = revenue * sale.discount / 100
+        revenue: Decimal = units_sold * product.unit_price
+        disc_cost: Decimal = Decimal(revenue * Decimal(sale.discount) / 100)
 
-        # Update team report =======================================
-        if team_name in team_rpt.keys():
-            team_rpt[team_name] += revenue
-        else:
-            team_rpt.update({team_name: revenue})
-
-        # Update product report ====================================
-        prod_sale_data: ProductSaleData = prod_rpt.get(product.name)
-
-        if prod_sale_data is not None:
-            prod_sale_data.gross_rev += revenue
-            prod_sale_data.total_units += units_sold
-            prod_sale_data.disc_cost += disc_cost
-
-        else:
-            prod_rpt.update(
-                {
-                    product.name: ProductSaleData(
-                        gross_rev=revenue,
-                        total_units=units_sold,
-                        disc_cost=disc_cost)
-                }
-            )
+        update_team_rpt(team_rpt, team_name, revenue)
+        update_prod_rpt(prod_rpt, product.name, revenue, units_sold, disc_cost)
 
     return team_rpt, prod_rpt

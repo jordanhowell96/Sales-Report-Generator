@@ -1,6 +1,9 @@
-# Defines custom dataclass models
+# Defines custom dataclass models.
+# Decimal is used instead of float to represent money in order to avoid
+# rounding errors that floats are prone to.
 
 from dataclasses import dataclass
+from decimal import Decimal
 
 
 @dataclass
@@ -8,7 +11,7 @@ class Product:
     """Model for product data"""
 
     name: str
-    unit_price: float
+    unit_price: Decimal
     lot_size: int
 
 
@@ -16,9 +19,9 @@ class Product:
 class ProductSaleData:
     """Model for sales data of a product"""
 
-    gross_rev: float
+    gross_rev: Decimal
     total_units: int
-    disc_cost: float
+    disc_cost: Decimal
 
 
 @dataclass
@@ -28,4 +31,4 @@ class Sale:
     prod_id: int
     team_id: int
     lots_sold: int
-    discount: float
+    discount: Decimal
