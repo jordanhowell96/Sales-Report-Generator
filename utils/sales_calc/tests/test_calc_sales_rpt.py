@@ -40,7 +40,7 @@ class CalcSalesRptGeneralTest(unittest.TestCase):
 
         # Expected outputs =======================
 
-        cls.expected_team_rpt: dict[str, float] = {
+        cls.expected_team_rpt: dict[str, Decimal] = {
             "Team A": Decimal(3809.5),
             "Team B": Decimal(2679.2),
             "Team C": Decimal(13818)

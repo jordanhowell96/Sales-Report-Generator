@@ -4,7 +4,7 @@
 
 from decimal import Decimal
 from .update_rpts import update_prod_rpt, update_team_rpt
-from .exceptions import ProductNotFoundError, TeamNotFoundError
+from .get import get_product, get_team
 from ..models import Product, ProductSaleData, Sale
 
 
@@ -12,7 +12,7 @@ def calc_sales_rpt(*,
                    team_map: dict[int, str],
                    prod_master: dict[int, Product],
                    sales_data: tuple[Sale],
-                   hide_exc=False
+                   hide_exc: bool = False
                    ) -> tuple[dict[str, Decimal],
                               dict[str, ProductSaleData]]:
     """
@@ -25,16 +25,13 @@ def calc_sales_rpt(*,
 
         :returns: tuple of two dicts where the first dict contains team report information with
 
-            key = team name (str),
-            value = revenue (Decimal)
+            key = team name (str)
+            value = gross revenue (Decimal)
 
             and the second dict contains product report information with
 
-            key = product name (str),
+            key = product name (str)
             value = ProductSaleData
-
-        :raises ProductNotFoundError if a product id in the sales data does not exist in the product master
-        :raises TeamNotFoundError if a team id in the sales data does not exist in the team map
     """
 
     # Initialize output dicts
@@ -44,22 +41,8 @@ def calc_sales_rpt(*,
     # Iterate through sales
     sale: Sale
     for sale in sales_data:
-
-        # Get product info
-        product: Product = prod_master.get(sale.prod_id)
-        if not product:
-            if hide_exc:
-                print(f"Error: Product ID {sale.prod_id} not found in team map.")
-                exit()
-            raise ProductNotFoundError(sale.prod_id)
-
-        # Get team name
-        team_name: str = team_map.get(sale.team_id)
-        if not team_name:
-            if hide_exc:
-                print(f"Error: Team ID {sale.team_id} not found in product master.")
-                exit()
-            raise TeamNotFoundError(sale.team_id)
+        product: Product = get_product(prod_master, sale.prod_id, hide_exc)
+        team_name: str = get_team(team_map, sale.team_id, hide_exc)
 
         units_sold: int = sale.lots_sold * product.lot_size
         revenue: Decimal = units_sold * product.unit_price

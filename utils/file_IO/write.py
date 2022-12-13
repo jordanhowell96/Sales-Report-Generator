@@ -102,7 +102,7 @@ def write_prod_rpt(file_name: str | None,
         name,
         f"{round(data.gross_rev, 2):.2f}",
         data.total_units,
-        f"{round(data.disc_cost), 2:.2f}")
+        f"{round(data.disc_cost, 2):.2f}")
         for name, data in prod_rpt.items()]
 
     # Sort and add header
