@@ -9,7 +9,7 @@ from .config import DEFAULT_PROD_MASTER_FILE, DEFAULT_SALES_FILE, \
 
 def read_infile(file_name: str) -> tuple[list[str]]:
     """
-        Generic read function for an input file
+        Reads a generic .csv input file
 
         :param file_name: name of source file (str)
 

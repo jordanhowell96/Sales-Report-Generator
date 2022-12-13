@@ -20,7 +20,7 @@ class ProductSaleData:
     """Model for sales data of a product"""
 
     gross_rev: Decimal
-    total_units: int
+    units_sold: int
     disc_cost: Decimal
 
 

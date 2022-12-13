@@ -4,7 +4,7 @@
 
 from decimal import Decimal
 from .update_rpts import update_prod_rpt, update_team_rpt
-from .get import get_product, get_team
+from .get_funcs import get_product, get_team
 from ..models import Product, ProductSaleData, Sale
 
 

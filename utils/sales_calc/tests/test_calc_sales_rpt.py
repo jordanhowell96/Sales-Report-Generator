@@ -49,15 +49,15 @@ class CalcSalesRptGeneralTest(unittest.TestCase):
         cls.expected_prod_rpt: dict[str, ProductSaleData] = {
             "Product A": ProductSaleData(
                 gross_rev=Decimal(2130),
-                total_units=60,
+                units_sold=60,
                 disc_cost=Decimal(17.75)),
             "Product B": ProductSaleData(
                 gross_rev=Decimal(904.2),
-                total_units=20,
+                units_sold=20,
                 disc_cost=Decimal(90.42)),
             "Product C": ProductSaleData(
                 gross_rev=Decimal(17272.5),
-                total_units=1750,
+                units_sold=1750,
                 disc_cost=Decimal(3730.86))
         }
 
@@ -100,7 +100,7 @@ class CalcSalesRptGeneralTest(unittest.TestCase):
         if product not in self.actual_prod_rpt.keys():
             raise AssertionError(f"{product} test product not found in Product Report")
 
-        elif self.expected_prod_rpt[product].total_units != self.actual_prod_rpt[product].total_units:
+        elif self.expected_prod_rpt[product].units_sold != self.actual_prod_rpt[product].units_sold:
             raise AssertionError(f"Expected {product} test product units sold does not equal "
                                  f"actual {product} test product units sold.")
 
@@ -115,51 +115,51 @@ class CalcSalesRptGeneralTest(unittest.TestCase):
             raise AssertionError(f"Expected {product} test product discount cost does not equal "
                                  f"actual {product} test product discount cost..")
 
-    def test_team_a_rev(self):
+    def test_team_a_rev(self) -> None:
         """Test Team A revenue accuracy"""
         self.assert_team_rpt_rev_equal("Team A")
 
-    def test_team_b_rev(self):
+    def test_team_b_rev(self) -> None:
         """Test Team B revenue accuracy"""
         self.assert_team_rpt_rev_equal("Team B")
 
-    def test_team_c_rev(self):
+    def test_team_c_rev(self) -> None:
         """Test Team C revenue accuracy"""
         self.assert_team_rpt_rev_equal("Team C")
 
-    def test_prod_a_rev(self):
+    def test_prod_a_rev(self) -> None:
         """Test Product A gross revenue accuracy"""
         self.assert_prod_rpt_rev_equal("Product A")
 
-    def test_prod_b_rev(self):
+    def test_prod_b_rev(self) -> None:
         """Test Product B gross revenue accuracy"""
         self.assert_prod_rpt_rev_equal("Product B")
 
-    def test_prod_c_rev(self):
+    def test_prod_c_rev(self) -> None:
         """Test Product C gross revenue accuracy"""
         self.assert_prod_rpt_rev_equal("Product C")
 
-    def test_prod_a_units(self):
+    def test_prod_a_units(self) -> None:
         """Tests Product A units sold accuracy"""
         self.assert_prod_rpt_units_equal("Product A")
 
-    def test_prod_b_units(self):
+    def test_prod_b_units(self) -> None:
         """Tests Product B units sold accuracy"""
         self.assert_prod_rpt_units_equal("Product B")
 
-    def test_prod_c_units(self):
+    def test_prod_c_units(self) -> None:
         """Tests Product C units sold accuracy"""
         self.assert_prod_rpt_units_equal("Product C")
 
-    def test_prod_a_disc_cost(self):
+    def test_prod_a_disc_cost(self) -> None:
         """Tests Product A discount cost accuracy"""
         self.assert_prod_rpt_disc_cost_equal("Product A")
 
-    def test_prod_b_disc_cost(self):
+    def test_prod_b_disc_cost(self) -> None:
         """Tests Product B discount cost accuracy"""
         self.assert_prod_rpt_disc_cost_equal("Product B")
 
-    def test_prod_c_disc_cost(self):
+    def test_prod_c_disc_cost(self) -> None:
         """Tests Product C discount cost accuracy"""
         self.assert_prod_rpt_disc_cost_equal("Product C")
 

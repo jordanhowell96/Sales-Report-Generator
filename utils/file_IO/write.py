@@ -73,7 +73,7 @@ def write_team_rpt(file_name: str | None, team_rpt: dict[str, Decimal]) -> None:
     success = write_outfile(file_name, file_rows)
 
     if success:
-        print(f"Team report file written at {DESTINATION_FOLDER}\\{file_name}\n")
+        print(f"Success: Team report file written at {DESTINATION_FOLDER}\\{file_name}\n")
 
 
 def write_prod_rpt(file_name: str | None,
@@ -101,7 +101,7 @@ def write_prod_rpt(file_name: str | None,
     file_rows: list[tuple[str, str, int | str, str]] = [(
         name,
         f"{round(data.gross_rev, 2):.2f}",
-        data.total_units,
+        data.units_sold,
         f"{round(data.disc_cost, 2):.2f}")
         for name, data in prod_rpt.items()]
 
@@ -113,4 +113,4 @@ def write_prod_rpt(file_name: str | None,
     success = write_outfile(file_name, file_rows)
 
     if success:
-        print(f"Product report file written at {DESTINATION_FOLDER}\\{file_name}\n")
+        print(f"Success: Product report file written at {DESTINATION_FOLDER}\\{file_name}\n")
