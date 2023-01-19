@@ -1,3 +1,5 @@
+# Sales Report Generator
+
 ## Program Description 
 This program reads data from a team map file, a product master file, and a sales file then calculates team reports and 
 product reports, and finally writes these reports to output files. This program can be executed by running report.py in
