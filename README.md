@@ -10,7 +10,7 @@ Python version 3.10 or higher is required to run this program. Ensure Python has
 been added to your PATH.
 
 ## Input Files
-The input files, which are the team map, product master, and sales file should all be .csv files that contain the data 
+The input files, which are the team map, product master, and sales file, should all be .csv files that contain the data 
 described below.
 
 ### Team Map
